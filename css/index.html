@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <!-- <link rel="stylesheet" href="./css/index.css"> -->
+    <title>Email Sending Application</title>
     <style>
+        /* CSS styles remain the same */
         * {
             margin: 0;
             padding: 0;
@@ -66,26 +66,41 @@
     </style>
 </head>
 
-
 <body>
-
     <div class="login-page">
         <h3>Email Sending Application</h3>
-
-       <form action="/sendmail" >
-
-        <input type="email" placeholder="to" class="input-field">
-        <input type="email" placeholder="from" class="input-field">
-        <!-- <input type="password" placeholder="Subject" class="input-field"> -->
-        <textarea name="Subject" id="" cols="48" rows="10" placeholder="Subject"></textarea>
-        <button type="submit">Submit</button>
-
-       </form>
+        <form id="emailForm" method="POST">
+            <input type="email" name="to" placeholder="To" class="input-field" required>
+            <input type="email" name="from" placeholder="From" class="input-field" required>
+            <textarea name="subject" cols="48" rows="10" placeholder="Subject" class="input-field" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
     </div>
-
-
     <script>
-       
+        document.getElementById('emailForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(this);
+
+            fetch('/sendmail', {
+                    method: 'POST',
+                    body: JSON.stringify(Object.fromEntries(formData.entries())),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Email sent successfully');
+                    } else {
+                        alert('Failed to send email');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred');
+                });
+        });
     </script>
 </body>
 
