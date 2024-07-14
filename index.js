@@ -1,13 +1,16 @@
-// const express=require("express");
-// const app=express();
-
-// app.listen(8080,()=>{
-//     console.log("your node app is running on port 8080");
-// })
-
 
 const express = require("express");
 const nodemailer = require("nodemailer");
+const bodyparser=require("body-parser")
+const path = require('path');
+// const cors = require('cors');
+const fs = require('fs');
+
+
+
+const app = express();
+app.use(express.json())
+app.use(express.urlencoded())
 
 const transporter = nodemailer.createTransport({
   host: "localhost",
@@ -15,9 +18,29 @@ const transporter = nodemailer.createTransport({
   secure: false,
 });
 
-const app = express();
+
+
+
+const staticDirectory = path.join(__dirname, 'css');
+console.log("dire",__dirname);
+console.log(`Serving static files from: ${staticDirectory}`);
+
+fs.readdir(staticDirectory, (err, files) => {
+  if (err) {
+      return console.log('Unable to scan directory: ' + err);
+  }
+  console.log('Directory contents:', files);
+});
+
+app.use(express.static(staticDirectory));
 
 app.get("/", (req, res) => {
+    res.sendFile(path.join(staticDirectory, "index.html"));
+});
+
+
+app.get("/sendmail", (req, res) => {
+  console.log("this is req boy",req.body);
   const mailOptions = {
     to: "tejal@gmail.com",
     from: "do-not-reply@jobapp.com",
