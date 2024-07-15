@@ -79,52 +79,45 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const transporter = nodemailer.createTransport({
   host: "localhost",
-  port: "1025",
+  port: 1025,
   secure: false,
 });
 
-const staticDirectory = path.join(__dirname, "css");
-console.log("dire", __dirname);
+const staticDirectory = path.join(__dirname, 'css');
+console.log("Directory:", __dirname);
 console.log(`Serving static files from: ${staticDirectory}`);
 
 fs.readdir(staticDirectory, (err, files) => {
   if (err) {
-    return console.log("Unable to scan directory: " + err);
+      return console.log('Unable to scan directory:', err);
   }
-  console.log("Directory contents:", files);
+  console.log('Directory contents:', files);
 });
 
 app.use(express.static(staticDirectory));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(staticDirectory, "index.html"));
+    res.sendFile(path.join(staticDirectory, "index.html"));
 });
 
 app.post("/sendmail", (req, res) => {
-  const { to, from, subject } = req.body;
+  const { to, from, subject, message } = req.body;
+  console.log("body ",req.body);
+
   const mailOptions = {
     to,
     from,
     subject,
-    html: `
-    <html>
-    <head></head>
-    <body>
-    <h1>Hi There,</h1>
-    <h3>Welcome to job app </h3>
-    <p style="color: blue;">lorem ipsum dor sit ametlorem ipsum dor sit ametlorem ipsum dor sit ametlorem ipsum dor sit ametlorem ipsum dor sit ametlorem ipsum dor sit ametlorem ipsum dor sit amet</p>
-    </body>
-    </html>
-    `,
+    html: `<html><body><p>${message}</p></body></html>`
   };
 
   transporter.sendMail(mailOptions, (err, info) => {
@@ -133,7 +126,7 @@ app.post("/sendmail", (req, res) => {
       return res.status(500).json({ success: false, message: "Failed to send email" });
     } else {
       console.log(info);
-      return res.status(200).json({ success: true, message: "Mail sent successfully" });
+      return res.json({ success: true, message: "Mail sent successfully" });
     }
   });
 });

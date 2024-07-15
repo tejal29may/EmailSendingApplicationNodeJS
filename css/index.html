@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Sending Application</title>
     <style>
-        /* CSS styles remain the same */
+        /* Add your CSS styles here */
         * {
             margin: 0;
             padding: 0;
@@ -67,41 +67,19 @@
 </head>
 
 <body>
+
     <div class="login-page">
         <h3>Email Sending Application</h3>
-        <form id="emailForm" method="POST">
+
+        <form action="/sendmail" method="POST">
             <input type="email" name="to" placeholder="To" class="input-field" required>
             <input type="email" name="from" placeholder="From" class="input-field" required>
-            <textarea name="subject" cols="48" rows="10" placeholder="Subject" class="input-field" required></textarea>
-            <button type="submit">Submit</button>
+            <textarea name="subject" cols="48" rows="2" placeholder="Subject" class="input-field" required></textarea>
+            <textarea name="message" cols="48" rows="10" placeholder="Message" class="input-field" required></textarea>
+            <button type="submit">Send Email</button>
         </form>
     </div>
-    <script>
-        document.getElementById('emailForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-            const formData = new FormData(this);
 
-            fetch('/sendmail', {
-                    method: 'POST',
-                    body: JSON.stringify(Object.fromEntries(formData.entries())),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Email sent successfully');
-                    } else {
-                        alert('Failed to send email');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred');
-                });
-        });
-    </script>
 </body>
 
 </html>
